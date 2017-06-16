@@ -23,7 +23,22 @@ searchBox.addEventListener("click", function() {
 submitBox.addEventListener("click", function(e) {
   e.preventDefault();
   searchBoxValue = searchBox.value;
-  console.log(searchBoxValue);
+  performSearch(searchBoxValue);
 });
 
-fetch();
+function performSearch(keyword) {
+  var url =
+    "https://api.soundcloud.com/users/?q=" +
+    keyword +
+    "&client_id=095fe1dcd09eb3d0e1d3d89c76f5618f";
+  fetch(url)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      console.log(data);
+    })
+    .catch(function(error) {
+      throw new Error("Your data request was unsuccessful...");
+    });
+}
