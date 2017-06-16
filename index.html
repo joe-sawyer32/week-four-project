@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>SoundCloud Music Search</title>
   <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js">
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -14,11 +17,13 @@
     </section>
     <section class="search">
       <form class="search-form">
-        
+        <input type="text" value="Search For Your Favorite Artist" id="userSearch">
+        <button id="searchSubmit"></button>
       </form>
     </section>
     <section class="results"></section>
   </div>
   <script src="main.js"></script>
 </body>
+
 </html>
