@@ -27,22 +27,49 @@ submitBox.addEventListener("click", function() {
   performSearch(searchBoxValue);
 });
 
-function displayTracks(user) {
-  var url = "https://api.soundcloud.com/user";
-  fetch;
+function displayTracks(tracks) {
+  var trackOptionBlock = document.createElement("div");
+  trackOptionBlock.classList.add("trackOptions");
+}
+
+function getTracks(user) {
+  var url =
+    "https://api.soundcloud.com/users/" +
+    user +
+    "/tracks" +
+    "?client_id=095fe1dcd09eb3d0e1d3d89c76f5618f";
+  fetch(url)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      console.log(data);
+      displayTracks(data);
+    })
+    .catch(function(error) {
+      throw new Error("You were not able to get and/or process tracks...");
+    });
+}
+
+function clearResults() {
+  if (results.innerHTML != "") {
+    results.innerHTML = "";
+  }
 }
 
 function displayArtists(artists) {
-  var artistOptionBlock = document.createElement("div");
-  artistOptionBlock.classList.add("artistOptions");
-
+  var artistOptionsBlock = document.createElement("div");
+  artistOptionsBlock.classList.add("artist-options-block");
   for (let i = 0; i < artists.length; i++) {
     var thisArtist = artists[i];
     var artist = thisArtist.username;
     var artistTrackCount = thisArtist.track_count;
     if (artistTrackCount > 0) {
       var artistOption = document.createElement("div");
-      artistOption.classList.add("artistOption");
+      artistOption.classList.add("artist-option");
+      console.log("Artist Id: " + thisArtist.id);
+      artistOption.id = thisArtist.id;
+      console.log("Id Passed: " + artistOption.id);
       var user = document.createElement("h3");
       user.classList.add("user");
       user.innerHTML = "Username: " + artist;
@@ -51,20 +78,20 @@ function displayArtists(artists) {
       tracks.innerHTML = "Tracks: " + artistTrackCount;
 
       artistOption.addEventListener("click", function() {
-        displayTracks(thisArtist.id);
+        getTracks(this.id);
       });
 
       artistOption.appendChild(user);
       artistOption.appendChild(tracks);
-      artistOptionBlock.appendChild(artistOption);
+      artistOptionsBlock.appendChild(artistOption);
     }
   }
-  results.appendChild(artistOptionBlock);
+  results.appendChild(artistOptionsBlock);
 }
 
 function performSearch(keyword) {
   var url =
-    "https://api.soundcloud.com/users/?q=" +
+    "https://api.soundcloud.com/users?q=" +
     keyword +
     "&client_id=095fe1dcd09eb3d0e1d3d89c76f5618f";
   fetch(url)
@@ -72,9 +99,10 @@ function performSearch(keyword) {
       return response.json();
     })
     .then(function(data) {
+      clearResults();
       displayArtists(data);
     })
     .catch(function(error) {
-      throw new Error("Your data request was unsuccessful...");
+      throw new Error("You were not able to search and/or display results...");
     });
 }
