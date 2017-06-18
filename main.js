@@ -31,6 +31,13 @@ function playTrack(track) {
   console.log(track);
 }
 
+function clearTracks() {
+  var tracks = results.querySelector(".trackOptions");
+  if (tracks) {
+    tracks.remove();
+  }
+}
+
 function displayTracks(tracks) {
   var trackOptionsBlock = document.createElement("div");
   trackOptionsBlock.classList.add("trackOptions");
@@ -41,6 +48,11 @@ function displayTracks(tracks) {
     var trackOption = document.createElement("div");
     trackOption.classList.add("track-option");
     trackOption.id = thisTrack.id;
+    var trackPicWrapper = document.createElement("div");
+    trackPicWrapper.classList.add("trackPicWrapper");
+    var trackPic = document.createElement("img");
+    trackPic.classList.add("trackPic");
+    trackPic.src = thisTrack.artwork_url;
     var track = document.createElement("h3");
     track.classList.add("track");
     track.innerHTML = trackTitle;
@@ -52,6 +64,8 @@ function displayTracks(tracks) {
       playTrack(this.id);
     });
 
+    trackPicWrapper.appendChild(trackPic);
+    trackOption.appendChild(trackPicWrapper);
     trackOption.appendChild(track);
     trackOption.appendChild(user);
     trackOptionsBlock.appendChild(trackOption);
@@ -71,22 +85,22 @@ function getTracks(user) {
     })
     .then(function(data) {
       if (data.length == 0) {
-        throw new Error(
-          "This artist does not have any public tracks available."
-        );
+        console.log("This artist does not have any public tracks available.");
       } else {
+        clearTracks();
         displayTracks(data);
       }
     })
     .catch(function(error) {
-      console.log(error);
       throw new Error("You were not able to get and/or process tracks...");
     });
 }
 
 function clearResults() {
-  if (results.innerHTML != "") {
-    results.innerHTML = "";
+  var artists = results.querySelector(".artist-options-block");
+  if (artists) {
+    clearTracks();
+    artists.remove();
   }
 }
 
@@ -101,6 +115,11 @@ function displayArtists(artists) {
       var artistOption = document.createElement("div");
       artistOption.classList.add("artist-option");
       artistOption.id = thisArtist.id;
+      var userPicWrapper = document.createElement("div");
+      userPicWrapper.classList.add("userPicWrapper");
+      var userPic = document.createElement("img");
+      userPic.classList.add("userPic");
+      userPic.src = thisArtist.avatar_url;
       var user = document.createElement("h3");
       user.classList.add("user");
       user.innerHTML = "Username: " + artist;
@@ -112,6 +131,8 @@ function displayArtists(artists) {
         getTracks(this.id);
       });
 
+      userPicWrapper.appendChild(userPic);
+      artistOption.appendChild(userPicWrapper);
       artistOption.appendChild(user);
       artistOption.appendChild(tracks);
       artistOptionsBlock.appendChild(artistOption);
@@ -131,14 +152,13 @@ function performSearch(keyword) {
     })
     .then(function(data) {
       if (data.length == 0) {
-        throw new Error("There are no artists associated with this search.");
+        console.log("There are no artists associated with this search.");
       } else {
         clearResults();
         displayArtists(data);
       }
     })
     .catch(function(error) {
-      console.log(error);
       throw new Error("You were not able to search and/or display results...");
     });
 }
