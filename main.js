@@ -29,6 +29,13 @@ submitBox.addEventListener("click", function() {
 
 function playTrack(track) {
   console.log(track);
+  var player = document.querySelector(".music-player");
+  player.setAttribute("autoplay", true);
+  var url =
+    "http://api.soundcloud.com/tracks/" +
+    track +
+    "/stream?client_id=095fe1dcd09eb3d0e1d3d89c76f5618f";
+  player.src = url;
 }
 
 function clearTracks() {
