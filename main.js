@@ -27,9 +27,36 @@ submitBox.addEventListener("click", function() {
   performSearch(searchBoxValue);
 });
 
+function playTrack(track) {
+  console.log(track);
+}
+
 function displayTracks(tracks) {
-  var trackOptionBlock = document.createElement("div");
-  trackOptionBlock.classList.add("trackOptions");
+  var trackOptionsBlock = document.createElement("div");
+  trackOptionsBlock.classList.add("trackOptions");
+  for (let i = 0; i < tracks.length; i++) {
+    var thisTrack = tracks[i];
+    var artist = thisTrack.user.username;
+    var trackTitle = thisTrack.title;
+    var trackOption = document.createElement("div");
+    trackOption.classList.add("track-option");
+    trackOption.id = thisTrack.id;
+    var track = document.createElement("h3");
+    track.classList.add("track");
+    track.innerHTML = trackTitle;
+    var user = document.createElement("h4");
+    user.classList.add("user");
+    user.innerHTML = artist;
+
+    trackOption.addEventListener("click", function() {
+      playTrack(this.id);
+    });
+
+    trackOption.appendChild(track);
+    trackOption.appendChild(user);
+    trackOptionsBlock.appendChild(trackOption);
+  }
+  results.appendChild(trackOptionsBlock);
 }
 
 function getTracks(user) {
@@ -43,10 +70,16 @@ function getTracks(user) {
       return response.json();
     })
     .then(function(data) {
-      console.log(data);
-      displayTracks(data);
+      if (data.length == 0) {
+        throw new Error(
+          "This artist does not have any public tracks available."
+        );
+      } else {
+        displayTracks(data);
+      }
     })
     .catch(function(error) {
+      console.log(error);
       throw new Error("You were not able to get and/or process tracks...");
     });
 }
@@ -67,9 +100,7 @@ function displayArtists(artists) {
     if (artistTrackCount > 0) {
       var artistOption = document.createElement("div");
       artistOption.classList.add("artist-option");
-      console.log("Artist Id: " + thisArtist.id);
       artistOption.id = thisArtist.id;
-      console.log("Id Passed: " + artistOption.id);
       var user = document.createElement("h3");
       user.classList.add("user");
       user.innerHTML = "Username: " + artist;
@@ -99,10 +130,15 @@ function performSearch(keyword) {
       return response.json();
     })
     .then(function(data) {
-      clearResults();
-      displayArtists(data);
+      if (data.length == 0) {
+        throw new Error("There are no artists associated with this search.");
+      } else {
+        clearResults();
+        displayArtists(data);
+      }
     })
     .catch(function(error) {
+      console.log(error);
       throw new Error("You were not able to search and/or display results...");
     });
 }
